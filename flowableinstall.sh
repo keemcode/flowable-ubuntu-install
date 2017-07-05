@@ -26,7 +26,7 @@ export JDBCPOSTGRES=postgresql-9.4.1211.jar
 export JDBCMYSQLURL=https://dev.mysql.com/get/Downloads/Connector-J
 export JDBCMYSQL=mysql-connector-java-5.1.40.tar.gz
 
-export FLOWABLE_DOWNLOAD=https://github.com/flowable/flowable-engine/releases/download/flowable-6.1.0/flowable-6.1.0.zip
+export FLOWABLE_DOWNLOAD=https://github-production-release-asset-2e65be.s3.amazonaws.com/70780002/7b9689a8-5b59-11e7-9d24-37d0169864a1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20170705%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170705T020041Z&X-Amz-Expires=300&X-Amz-Signature=8cad16067cb6b8659fe78722ad9e7c2e856366a3ac441e400e28806f855dc63b&X-Amz-SignedHeaders=host&actor_id=5930258&response-content-disposition=attachment%3B%20filename%3Dflowable-6.1.0.zip&response-content-type=application%2Foctet-stream
 
 # Color variables
 txtund=$(tput sgr 0 1)          # Underline
