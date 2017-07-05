@@ -29,9 +29,9 @@ Installing
 To start the install, in Ubuntu terminal run;  
 
 ```
-curl -O https://raw.githubusercontent.com/loftuxab/alfresco-ubuntu-install/master/alfinstall.sh  
-chmod u+x alfinstall.sh
-./alfinstall.sh
+curl -O https://raw.githubusercontent.com/douglascrp/alfresco-ubuntu-install/flowable_install/flowableinstall.sh
+chmod u+x flowableinstall.sh
+./flowableinstall.sh
 ```
 
 All install options will be presented with an introduction. They default to 'y' (yes), so type n to skip install of that component. You need **sudo** access to install.  
