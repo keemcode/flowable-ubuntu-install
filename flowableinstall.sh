@@ -15,7 +15,7 @@ export TMP_INSTALL=/tmp/flowableinstall
 export DEFAULTYESNO="y"
 
 # Branch name to pull from server. Use master for stable.
-BRANCH=flowable_install
+BRANCH=master
 export BASE_DOWNLOAD=https://raw.githubusercontent.com/douglascrp/alfresco-ubuntu-install/$BRANCH
 
 export LOCALESUPPORT=en_US.utf8

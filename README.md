@@ -29,7 +29,7 @@ Installing
 To start the install, in Ubuntu terminal run;  
 
 ```
-curl -O https://raw.githubusercontent.com/douglascrp/alfresco-ubuntu-install/flowable_install/flowableinstall.sh
+curl -O https://raw.githubusercontent.com/douglascrp/alfresco-ubuntu-install/master/flowableinstall.sh
 chmod u+x flowableinstall.sh
 ./flowableinstall.sh
 ```
