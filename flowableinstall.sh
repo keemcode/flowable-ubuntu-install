@@ -298,7 +298,7 @@ echo "If you have already downloaded your war files you can skip this step and a
 echo "them manually."
 echo
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-read -e -p "Add Flowable Repository war file${ques} [y/n] " -i "$DEFAULTYESNO" installwar
+read -e -p "Add Flowable war files${ques} [y/n] " -i "$DEFAULTYESNO" installwar
 if [ "$installwar" = "y" ]; then
 
   echogreen "Downloading flowable war files..."
@@ -318,6 +318,7 @@ fi
 
 if [ "$installwar" = "y" ] || [ "$installsharewar" = "y" ]; then
 cd /tmp/flowableinstall
+fi
 
 # Finally, set the permissions
 sudo chown -R $FLOW_USER:$FLOW_GROUP $FLOW_HOME
