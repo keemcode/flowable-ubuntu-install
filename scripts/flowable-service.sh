@@ -1,6 +1,6 @@
 #!/bin/bash
 # -------
-# Script for starting/stopping Alfresco Tomcat from systemd
+# Script for starting/stopping Flowable Tomcat from systemd
 #
 # Copyright 2013-2016 Loftux AB, Peter Löfgren
 # Distributed under the Creative Commons Attribution-ShareAlike 3.0 Unported License (CC BY-SA 3.0)
@@ -8,12 +8,12 @@
 
 export LC_ALL=@@LOCALESUPPORT@@
 export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-export ALF_HOME=/opt/alfresco
-export CATALINA_HOME=/opt/alfresco/tomcat
-export CATALINA_TMPDIR=/opt/alfresco/tomcat/temp
+export FLOW_HOME=/opt/flowable
+export CATALINA_HOME=/opt/flowable/tomcat
+export CATALINA_TMPDIR=/opt/flowable/tomcat/temp
 export JRE_HOME=$JAVA_HOME/jre
 export PATH=$PATH:$HOME/bin:$JRE_HOME/bin
-export CATALINA_PID=$ALF_HOME/tomcat.pid
+export CATALINA_PID=$FLOW_HOME/tomcat.pid
 
 # IMPORTANT Update to match memory available on your server.
 # For production, A server with at least 8G ram, and -Xmx6G is recommended. More is better!
@@ -37,15 +37,15 @@ JAVA_OPTS="${JAVA_OPTS} -Djava.io.tmpdir=${CATALINA_TMPDIR}"
 
 #File encoding may be correct, but we specify them to be sure
 JAVA_OPTS="${JAVA_OPTS} -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
-JAVA_OPTS="${JAVA_OPTS} -Dalfresco.home=${ALF_HOME} -Dcom.sun.management.jmxremote=true"
+JAVA_OPTS="${JAVA_OPTS} -Dflowable.home=${FLOW_HOME} -Dcom.sun.management.jmxremote=true"
 JAVA_OPTS="${JAVA_OPTS} -server"
 
 start(){
-    sudo systemctl start alfresco.service
+    sudo systemctl start flowable.service
 }
 
 stop(){
-    sudo systemctl stop alfresco.service
+    sudo systemctl stop flowable.service
 }
 servicestart() {
     export JAVA_OPTS
@@ -61,25 +61,25 @@ cleanup(){
     SHUTDOWN_PORT=`netstat -vatn|grep LISTEN|grep 8005|wc -l`
 
     if [ $SHUTDOWN_PORT -ne 0 ]; then
-        logger -is -t "Alfresco Tomcat" "Warning: Alfresco started, cannot clean tomcat."
+        logger -is -t "Flowable Tomcat" "Warning: Flowable started, cannot clean tomcat."
     else
         # cleanup temp directory before starting
         {
             sudo rm -rf $CATALINA_TMPDIR/*
         } || {
-            logger -i -t "Alfresco Tomcat" "Warning: Failed to clean tomcat tempdirectory."
+            logger -i -t "Flowable Tomcat" "Warning: Failed to clean tomcat tempdirectory."
         }
 
         {
             sudo rm -rf $CATALINA_HOME/work/*
         } || {
-            logger -i -t "Alfresco Tomcat" "Warning: Failed to clean tomcat work directory."
+            logger -i -t "Flowable Tomcat" "Warning: Failed to clean tomcat work directory."
         }
 
         {
             sudo rm -rf $CATALINA_HOME/logs/*
         } || {
-            logger -i -t "Alfresco Tomcat" "Warning: Failed to clean tomcat log directory."
+            logger -i -t "Flowable Tomcat" "Warning: Failed to clean tomcat log directory."
         }
     fi
 
@@ -106,7 +106,7 @@ case "$1" in
         start
         ;;
     status)
-        sudo systemctl status alfresco.service
+        sudo systemctl status flowable.service
         ;;
     *)
         echo "Usage: $0 {start|stop|restart|status|cleanup}"
