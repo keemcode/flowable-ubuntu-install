@@ -26,7 +26,11 @@ export JDBCPOSTGRES=postgresql-9.4.1211.jar
 export JDBCMYSQLURL=https://dev.mysql.com/get/Downloads/Connector-J
 export JDBCMYSQL=mysql-connector-java-5.1.40.tar.gz
 
-export FLOWABLE_DOWNLOAD=https://github-production-release-asset-2e65be.s3.amazonaws.com/70780002/7b9689a8-5b59-11e7-9d24-37d0169864a1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20170705%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170705T020041Z&X-Amz-Expires=300&X-Amz-Signature=8cad16067cb6b8659fe78722ad9e7c2e856366a3ac441e400e28806f855dc63b&X-Amz-SignedHeaders=host&actor_id=5930258&response-content-disposition=attachment%3B%20filename%3Dflowable-6.1.0.zip&response-content-type=application%2Foctet-stream
+export FLOWABLE_ADMIN_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-admin/6.1.0/flowable-ui-admin-6.1.0.war
+export FLOWABLE_IDM_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-idm-app/6.1.0/flowable-ui-idm-app-6.1.0.war
+export FLOWABLE_MODELER_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-modeler-app/6.1.0/flowable-ui-modeler-app-6.1.0.war
+export FLOWABLE_REST_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-app-rest/6.1.0/flowable-app-rest-6.1.0.war
+export FLOWABLE_TASK_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-task-app/6.1.0/flowable-ui-task-app-6.1.0.war
 
 # Color variables
 txtund=$(tput sgr 0 1)          # Underline
@@ -118,7 +122,8 @@ fi
 URLERROR=0
 
 for REMOTE in $TOMCAT_DOWNLOAD $JDBCPOSTGRESURL/$JDBCPOSTGRES $JDBCMYSQLURL/$JDBCMYSQL \
-        $FLOWABLE_DOWNLOAD
+        $FLOWABLE_ADMIN_DOWNLOAD $FLOWABLE_IDM_DOWNLOAD $FLOWABLE_MODELER_DOWNLOAD \
+        $FLOWABLE_REST_DOWNLOAD $FLOWABLE_TASK_DOWNLOAD
 
 do
         wget --spider $REMOTE --no-check-certificate >& /dev/null
@@ -302,247 +307,27 @@ echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 read -e -p "Add Flowable Repository war file${ques} [y/n] " -i "$DEFAULTYESNO" installwar
 if [ "$installwar" = "y" ]; then
 
-  echogreen "Downloading flowable war file..."
-  sudo curl -# -o $FLOW_HOME/addons/war/flowable.war $FLOWREPOWAR
+  echogreen "Downloading flowable war files..."
+  sudo curl -# -o $CATALINA_HOME/webapps/flowable-admin.war $FLOWABLE_ADMIN_DOWNLOAD 
+  sudo curl -# -o $CATALINA_HOME/webapps/flowable-idm.war $FLOWABLE_IDM_DOWNLOAD 
+  sudo curl -# -o $CATALINA_HOME/webapps/flowable-modeler.war $FLOWABLE_MODELER_DOWNLOAD
+  sudo curl -# -o $CATALINA_HOME/webapps/flowable-rest.war $FLOWABLE_REST_DOWNLOAD 
+  sudo curl -# -o $CATALINA_HOME/webapps/flowable-task.war $FLOWABLE_TASK_DOWNLOAD
   echo
 
-  # Add default flowable and share modules classloader config files
-  sudo curl -# -o $CATALINA_HOME/conf/Catalina/localhost/flowable.xml $BASE_DOWNLOAD/tomcat/flowable.xml
-
-  echogreen "Finished adding Flowable Repository war file"
+  echogreen "Finished adding Flowable war files"
   echo
 else
   echo
-  echo "Skipping adding Flowable Repository war file and addons"
-  echo
-fi
-
-read -e -p "Add Share Client war file${ques} [y/n] " -i "$DEFAULTYESNO" installsharewar
-if [ "$installsharewar" = "y" ]; then
-
-  echogreen "Downloading Share war file..."
-  sudo curl -# -o $FLOW_HOME/addons/war/share.war $FLOWSHAREWAR
-
-  # Add default flowable and share modules classloader config files
-  sudo curl -# -o $CATALINA_HOME/conf/Catalina/localhost/share.xml $BASE_DOWNLOAD/tomcat/share.xml
-
-  echo
-  echogreen "Finished adding Share war file"
-  echo
-else
-  echo
-  echo "Skipping adding Flowable Share war file"
+  echo "Skipping adding Flowable war files"
   echo
 fi
 
 if [ "$installwar" = "y" ] || [ "$installsharewar" = "y" ]; then
 cd /tmp/flowableinstall
 
-if [ "$installwar" = "y" ]; then
-    echored "You must install Share Services if you intend to use Share Client."
-    read -e -p "Add Share Services plugin${ques} [y/n] " -i "$DEFAULTYESNO" installshareservices
-    if [ "$installshareservices" = "y" ]; then
-      echo "Downloading Share Services addon..."
-      curl -# -O $FLOWSHARESERVICES
-      sudo mv flowable-share-services*.amp $FLOW_HOME/addons/flowable/
-    fi
-fi
-
-read -e -p "Add Google docs integration${ques} [y/n] " -i "$DEFAULTYESNO" installgoogledocs
-if [ "$installgoogledocs" = "y" ]; then
-  echo "Downloading Google docs addon..."
-  if [ "$installwar" = "y" ]; then
-    curl -# -O $GOOGLEDOCSREPO
-    sudo mv flowable-googledocs-repo*.amp $FLOW_HOME/addons/flowable/
-  fi
-  if [ "$installsharewar" = "y" ]; then
-    curl -# -O $GOOGLEDOCSSHARE
-    sudo mv flowable-googledocs-share* $FLOW_HOME/addons/share/
-  fi
-fi
-fi
-
-
-echo
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "Install Flowable Office Services (Sharepoint protocol emulation)."
-echo "This allows you to open and save Microsoft Office documents online."
-echored "This module is not Open Source (Flowable proprietary)."
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-read -e -p "Install Flowable Office Services integration${ques} [y/n] " -i "$DEFAULTYESNO" installssharepoint
-if [ "$installssharepoint" = "y" ]; then
-    echogreen "Installing Flowable Offices Services bundle..."
-    echogreen "Downloading Flowable Office Services amp file"
-    # Sub shell to keep the file name
-    (cd $FLOW_HOME/addons/flowable;sudo curl -# -O $AOS_AMP)
-    echogreen "Downloading _vti_bin.war into tomcat/webapps"
-    sudo curl -# -o $FLOW_HOME/tomcat/webapps/_vti_bin.war $AOS_VTI
-    echogreen "Downloading ROOT.war into tomcat/webapps"
-    sudo curl -# -o $FLOW_HOME/tomcat/webapps/ROOT.war $AOS_SERVER_ROOT
-fi
-
-# Install of war and addons complete, apply them to war file
-if [ "$installwar" = "y" ] || [ "$installsharewar" = "y" ] || [ "$installssharepoint" = "y" ]; then
-    # Check if Java is installed before trying to apply
-    if type -p java; then
-        _java=java
-    elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
-        _java="$JAVA_HOME/bin/java"
-        echored "No JDK installed. When you have installed JDK, run "
-        echored "$FLOW_HOME/addons/apply.sh all"
-        echored "to install addons with Flowable or Share."
-    fi
-    if [[ "$_java" ]]; then
-        sudo $FLOW_HOME/addons/apply.sh all
-    fi
-fi
-
-echo
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "Install Solr4 indexing engine."
-echo "You can run Solr4 on a separate server, unless you plan to do that you should"
-echo "install the Solr4 indexing engine on the same server as your repository server."
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-read -e -p "Install Solr4 indexing engine${ques} [y/n] " -i "$DEFAULTYESNO" installsolr
-if [ "$installsolr" = "y" ]; then
-
-  # Make sure we have unzip available
-  sudo apt-get $APTVERBOSITY install unzip
-
-  # Check if we have an old install
-  if [ -d "$FLOW_HOME/solr4" ]; then
-     sudo mv $FLOW_HOME/solr4 $FLOW_HOME/solr4_BACKUP_`eval date +%Y%m%d%H%M`
-  fi
-  sudo mkdir -p $FLOW_HOME/solr4
-  cd $FLOW_HOME/solr4
-
-  echogreen "Downloading solr4.war file..."
-  sudo curl -# -o $CATALINA_HOME/webapps/solr4.war $SOLR4_WAR_DOWNLOAD
-
-  echogreen "Downloading config file..."
-  sudo curl -# -o $FLOW_HOME/solr4/solrconfig.zip $SOLR4_CONFIG_DOWNLOAD
-  echogreen "Expanding config file..."
-  sudo unzip -q solrconfig.zip
-  sudo rm solrconfig.zip
-
-  echogreen "Configuring..."
-
-  # Make sure dir exist
-  sudo mkdir -p $FLOW_DATA_HOME/solr4
-  mkdir -p $TMP_INSTALL
-
-  # Remove old config if exists
-  if [ -f "$CATALINA_HOME/conf/Catalina/localhost/solr.xml" ]; then
-     sudo rm $CATALINA_HOME/conf/Catalina/localhost/solr.xml
-  fi
-
-  # Set the solr data path
-  SOLRDATAPATH="$FLOW_DATA_HOME/solr4"
-  # Escape for sed
-  SOLRDATAPATH="${SOLRDATAPATH//\//\\/}"
-
-  sudo mv $FLOW_HOME/solr4/workspace-SpacesStore/conf/solrcore.properties $FLOW_HOME/solr4/workspace-SpacesStore/conf/solrcore.properties.orig
-  sudo mv $FLOW_HOME/solr4/archive-SpacesStore/conf/solrcore.properties $FLOW_HOME/solr4/archive-SpacesStore/conf/solrcore.properties.orig
-  sed "s/@@FLOWRESCO_SOLR4_DATA_DIR@@/$SOLRDATAPATH/g" $FLOW_HOME/solr4/workspace-SpacesStore/conf/solrcore.properties.orig >  $TMP_INSTALL/solrcore.properties
-  sudo mv  $TMP_INSTALL/solrcore.properties $FLOW_HOME/solr4/workspace-SpacesStore/conf/solrcore.properties
-  sed "s/@@FLOWRESCO_SOLR4_DATA_DIR@@/$SOLRDATAPATH/g" $FLOW_HOME/solr4/archive-SpacesStore/conf/solrcore.properties.orig >  $TMP_INSTALL/solrcore.properties
-  sudo mv  $TMP_INSTALL/solrcore.properties $FLOW_HOME/solr4/archive-SpacesStore/conf/solrcore.properties
-
-  echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>" > $TMP_INSTALL/solr4.xml
-  echo "<Context debug=\"0\" crossContext=\"true\">" >> $TMP_INSTALL/solr4.xml
-  echo "  <Environment name=\"solr/home\" type=\"java.lang.String\" value=\"$FLOW_HOME/solr4\" override=\"true\"/>" >> $TMP_INSTALL/solr4.xml
-  echo "  <Environment name=\"solr/model/dir\" type=\"java.lang.String\" value=\"$FLOW_HOME/solr4/flowableModels\" override=\"true\"/>" >> $TMP_INSTALL/solr4.xml
-  echo "  <Environment name=\"solr/content/dir\" type=\"java.lang.String\" value=\"$FLOW_DATA_HOME/solr4/content\" override=\"true\"/>" >> $TMP_INSTALL/solr4.xml
-  echo "</Context>" >> $TMP_INSTALL/solr4.xml
-  sudo mv $TMP_INSTALL/solr4.xml $CATALINA_HOME/conf/Catalina/localhost/solr4.xml
-
-  echogreen "Setting permissions..."
-  sudo chown -R $FLOW_USER:$FLOW_GROUP $CATALINA_HOME/webapps
-  sudo chown -R $FLOW_USER:$FLOW_GROUP $FLOW_DATA_HOME/solr4
-  sudo chown -R $FLOW_USER:$FLOW_GROUP $FLOW_HOME/solr4
-
-  echo
-  echogreen "Finished installing Solr4 engine."
-  echored "Verify your setting in flowable-global.properties."
-  echo "Set property value index.subsystem.name=solr4"
-  echo
-else
-  echo
-  echo "Skipping installing Solr4."
-  echo "You can always install Solr4 at a later time."
-  echo
-fi
-
-echo
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "Flowable BART - Backup and Recovery Tool"
-echo "Flowable BART is a backup and recovery tool for Flowable ECM. Is a shell script"
-echo "tool based on Duplicity for Flowable backups and restore from a local file system,"
-echo "FTP, SCP or Amazon S3 of all its components: indexes, data base, content store "
-echo "and all deployment and configuration files."
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-read -e -p "Install B.A.R.T${ques} [y/n] " -i "$DEFAULTYESNO" installbart
-
-if [ "$installbart" = "y" ]; then
- echogreen "Installing B.A.R.T"
-
-
- sudo mkdir -p $FLOW_HOME/scripts/bart
- sudo mkdir -p $FLOW_HOME/logs/bart
- sudo curl -# -o $TMP_INSTALL/$BART_PROPERTIES $BASE_BART_DOWNLOAD$BART_PROPERTIES
- sudo curl -# -o $TMP_INSTALL/$BART_EXECUTE $BASE_BART_DOWNLOAD$BART_EXECUTE
-
- # Update bart settings
- FLOWHOMEESCAPED="${FLOW_HOME//\//\\/}"
- BARTLOGPATH="$FLOW_HOME/logs/bart"
- FLOWBRTPATH="$FLOW_HOME/scripts/bart"
- INDEXESDIR="\$\{FLOW_DIRROOT\}/solr4"
- # Escape for sed
- BARTLOGPATH="${BARTLOGPATH//\//\\/}"
- FLOWBRTPATH="${FLOWBRTPATH//\//\\/}"
- INDEXESDIR="${INDEXESDIR//\//\\/}"
-
- sed -i "s/FLOW_INSTALLATION_DIR\=.*/FLOW_INSTALLATION_DIR\=$FLOWHOMEESCAPED/g" $TMP_INSTALL/$BART_PROPERTIES
- sed -i "s/FLOWBRT_LOG_DIR\=.*/FLOWBRT_LOG_DIR\=$BARTLOGPATH/g" $TMP_INSTALL/$BART_PROPERTIES
- sed -i "s/INDEXES_DIR\=.*/INDEXES_DIR\=$INDEXESDIR/g" $TMP_INSTALL/$BART_PROPERTIES
- sudo cp $TMP_INSTALL/$BART_PROPERTIES $FLOW_HOME/scripts/bart/$BART_PROPERTIES
- sed -i "s/FLOWBRT_PATH\=.*/FLOWBRT_PATH\=$FLOWBRTPATH/g" $TMP_INSTALL/$BART_EXECUTE
- sudo cp $TMP_INSTALL/$BART_EXECUTE $FLOW_HOME/scripts/bart/$BART_EXECUTE
-
- sudo chmod 700 $FLOW_HOME/scripts/bart/$BART_PROPERTIES
- sudo chmod 774 $FLOW_HOME/scripts/bart/$BART_EXECUTE
-
- # Install dependency
- sudo apt-get $APTVERBOSITY install duplicity;
-
- # Add to cron tab
- tmpfile=/tmp/crontab.tmp
-
- # read crontab and remove custom entries (usually not there since after a reboot
- # QNAP restores to default crontab: http://wiki.qnap.com/wiki/Add_items_to_crontab#Method_2:_autorun.sh
- sudo -u $FLOW_USER crontab -l | grep -vi "flowable-bart.sh" > $tmpfile
-
- # add custom entries to crontab
- echo "0 5 * * * $FLOW_HOME/scripts/bart/$BART_EXECUTE backup" >> $tmpfile
-
- #load crontab from file
- sudo -u $FLOW_USER crontab $tmpfile
-
- # remove temporary file
- rm $tmpfile
-
- # restart crontab
- sudo service cron restart
-
- echogreen "B.A.R.T Cron is installed to run in 5AM every day as the $FLOW_USER user"
-
-fi
-
 # Finally, set the permissions
 sudo chown -R $FLOW_USER:$FLOW_GROUP $FLOW_HOME
-if [ -d "$FLOW_HOME/www" ]; then
-   sudo chown -R www-data:root $FLOW_HOME/www
-fi
 
 echo
 echogreen "- - - - - - - - - - - - - - - - -"
@@ -551,7 +336,6 @@ echo
 echored "Manual tasks remaining:"
 echo
 echo "1. Add database. Install scripts available in $FLOW_HOME/scripts"
-echored "   It is however recommended that you use a separate database server."
 echo
 echo "2. Verify Tomcat memory and locale settings in the file"
 if [ "$ISON1604" = "y" ]; then
@@ -559,22 +343,15 @@ echo "   $FLOW_HOME/flowable-service.sh."
 else
 echo "   /etc/init/flowable.conf."
 fi
-echo "   Flowable runs best with lots of memory. Add some more to \"lots\" and you will be fine!"
 echo "   Match the locale LC_ALL (or remove) setting to the one used in this script."
-echo "   Locale setting is needed for LibreOffice date handling support."
 echo
-echo "3. Update database and other settings in flowable-global.properties"
-echo "   You will find this file in $CATALINA_HOME/shared/classes"
+echo "3. Update database and other settings in flowable-ui-app.properties"
+echo "   You will find this file in $CATALINA_HOME/lib/"
 echored "   Really, do this. There are some settings there that you need to verify."
 echo
-echo "4. Update properties for BART (if installed) in $FLOW_HOME/scripts/bart/flowable-bart.properties"
-echo "   DBNAME,DBUSER,DBPASS,DBHOST,REC_MYDBNAME,REC_MYUSER,REC_MYPASS,REC_MYHOST,DBTYPE "
+echo "4. Start nginx if you have installed it: sudo service nginx start"
 echo
-echo "5. Update cpu settings in $FLOW_HOME/scripts/limitconvert.sh if you have more than 2 cores."
-echo
-echo "6. Start nginx if you have installed it: sudo service nginx start"
-echo
-echo "7. Start Flowable/tomcat:"
+echo "5. Start Flowable/tomcat:"
 if [ "$ISON1604" = "y" ]; then
 echo "   sudo $FLOW_HOME/flowable-service.sh start"
 else
