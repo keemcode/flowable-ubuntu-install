@@ -210,20 +210,19 @@ if [ "$installtomcat" = "y" ]; then
   echo "It is important that this is is a resolvable server name."
   echo "This information will be added to default configuration files."
   echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-  read -e -p "Please enter the public host name for Share server (fully qualified domain name)${ques} [`hostname`] " -i "`hostname`" SHARE_HOSTNAME
-  read -e -p "Please enter the protocol to use for public Share server (http or https)${ques} [http] " -i "http" SHARE_PROTOCOL
-  SHARE_PORT=80
-  if [ "${SHARE_PROTOCOL,,}" = "https" ]; then
-    SHARE_PORT=443
+  read -e -p "Please enter the public host name for Flowable server (fully qualified domain name)${ques} [`hostname`] " -i "`hostname`" FLOWABLE_HOSTNAME
+  read -e -p "Please enter the protocol to use for public Flowable server (http or https)${ques} [http] " -i "http" FLOWABLE_PROTOCOL
+  FLOWABLE_PORT=80
+  if [ "${FLOWABLE_PROTOCOL,,}" = "https" ]; then
+    FLOWABLE_PORT=443
   fi
-  read -e -p "Please enter the host name for Flowable Repository server (fully qualified domain name)${ques} [$SHARE_HOSTNAME] " -i "$SHARE_HOSTNAME" REPO_HOSTNAME
 
   # Add default flowable-ui-app.properties
   FLOWABLE_UI_APP_PROPERTIES=/tmp/flowableinstall/flowable-ui-app.properties
   sudo curl -# -o $FLOWABLE_UI_APP_PROPERTIES $BASE_DOWNLOAD/tomcat/lib/flowable-ui-app.properties
-  sed -i "s/@@FLOWABLE_SERVER@@/$SHARE_HOSTNAME/g" $FLOWABLE_UI_APP_PROPERTIES
-  sed -i "s/@@FLOWABLE_SERVER_PORT@@/$SHARE_PORT/g" $FLOWABLE_UI_APP_PROPERTIES
-  sed -i "s/@@FLOWABLE_SERVER_PROTOCOL@@/$SHARE_PROTOCOL/g" $FLOWABLE_UI_APP_PROPERTIES
+  sed -i "s/@@FLOWABLE_SERVER@@/$FLOWABLE_HOSTNAME/g" $FLOWABLE_UI_APP_PROPERTIES
+  sed -i "s/@@FLOWABLE_SERVER_PORT@@/$FLOWABLE_PORT/g" $FLOWABLE_UI_APP_PROPERTIES
+  sed -i "s/@@FLOWABLE_SERVER_PROTOCOL@@/$FLOWABLE_PROTOCOL/g" $FLOWABLE_UI_APP_PROPERTIES
   sudo mv $FLOWABLE_UI_APP_PROPERTIES $CATALINA_HOME/lib/
 
   echo
@@ -294,15 +293,10 @@ echo
 echo
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "Install Flowable war files."
-echo "Download war files and optional addons."
+echo "Download war files."
 echo "If you have already downloaded your war files you can skip this step and add "
 echo "them manually."
 echo
-echo "If you use separate Flowable and Share server, only install the needed for each"
-echo "server. Flowable Repository will need Share Services if you use Share."
-echo
-echo "This install place downloaded files in the $FLOW_HOME/addons and then use the"
-echo "apply.sh script to add them to tomcat/webapps. Se this script for more info."
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 read -e -p "Add Flowable Repository war file${ques} [y/n] " -i "$DEFAULTYESNO" installwar
 if [ "$installwar" = "y" ]; then
@@ -314,7 +308,6 @@ if [ "$installwar" = "y" ]; then
   sudo curl -# -o $CATALINA_HOME/webapps/flowable-rest.war $FLOWABLE_REST_DOWNLOAD 
   sudo curl -# -o $CATALINA_HOME/webapps/flowable-task.war $FLOWABLE_TASK_DOWNLOAD
   echo
-
   echogreen "Finished adding Flowable war files"
   echo
 else
