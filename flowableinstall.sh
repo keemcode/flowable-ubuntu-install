@@ -219,7 +219,7 @@ if [ "$installtomcat" = "y" ]; then
 
   # Add default flowable-ui-app.properties
   FLOWABLE_UI_APP_PROPERTIES=/tmp/flowableinstall/flowable-ui-app.properties
-  sudo curl -# -o $FLOWABLE_UI_APP_PROPERTIES $BASE_DOWNLOAD/tomcat/lib/flowable-ui-app.properties
+  sudo curl -# -o $FLOWABLE_UI_APP_PROPERTIES $BASE_DOWNLOAD/tomcat/flowable-ui-app.properties
   sed -i "s/@@FLOWABLE_SERVER@@/$FLOWABLE_HOSTNAME/g" $FLOWABLE_UI_APP_PROPERTIES
   sed -i "s/@@FLOWABLE_SERVER_PORT@@/$FLOWABLE_PORT/g" $FLOWABLE_UI_APP_PROPERTIES
   sed -i "s/@@FLOWABLE_SERVER_PROTOCOL@@/$FLOWABLE_PROTOCOL/g" $FLOWABLE_UI_APP_PROPERTIES
