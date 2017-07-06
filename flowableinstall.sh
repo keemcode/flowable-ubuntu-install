@@ -212,7 +212,7 @@ if [ "$installtomcat" = "y" ]; then
   echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   read -e -p "Please enter the public host name for Flowable server (fully qualified domain name)${ques} [`hostname`] " -i "`hostname`" FLOWABLE_HOSTNAME
   read -e -p "Please enter the protocol to use for public Flowable server (http or https)${ques} [http] " -i "http" FLOWABLE_PROTOCOL
-  FLOWABLE_PORT=80
+  read -e -p "Please enter the port to use for public Flowable server ${ques} [8080] " -i "8080" FLOWABLE_PORT
   if [ "${FLOWABLE_PROTOCOL,,}" = "https" ]; then
     FLOWABLE_PORT=443
   fi

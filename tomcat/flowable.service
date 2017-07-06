@@ -1,16 +1,16 @@
-# Alfresco Tomcat Systemd Startup script
+# Flowable Tomcat Systemd Startup script
 # Authors: loftux, housni, cuspycode
 
 [Unit]
-Description=Alfresco Community Tomcat service
+Description=Flowable Tomcat service
 
 [Service]
 Type=forking
-ExecStart=/opt/alfresco/alfresco-service.sh servicestart
-ExecStop=/opt/alfresco/alfresco-service.sh servicestop
+ExecStart=/opt/flowable/flowable-service.sh servicestart
+ExecStop=/opt/flowable/flowable-service.sh servicestop
 Restart=always
-User=alfresco
-WorkingDirectory=/opt/alfresco/logs
+User=flowable
+WorkingDirectory=/opt/flowable/logs
 LimitNOFILE=8192:65536
 
 [Install]
