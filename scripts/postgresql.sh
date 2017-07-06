@@ -1,18 +1,18 @@
 #!/bin/bash
 # -------
-# Script for install of Postgresql to be used with Alfresco
+# Script for install of Postgresql to be used with Flowable
 #
 # Copyright 2013-2016 Loftux AB, Peter Löfgren
 # Distributed under the Creative Commons Attribution-ShareAlike 3.0 Unported License (CC BY-SA 3.0)
 # -------
 
-export ALFRESCODB=alfresco
-export ALFRESCOUSER=alfresco
+export FLOWABLEDB=flowable
+export FLOWABLEUSER=flowable
 
 echo
 echo "--------------------------------------------"
 echo "This script will install PostgreSQL."
-echo "and create alfresco database and user."
+echo "and create flowable database and user."
 echo "You may be prompted for sudo password."
 echo "--------------------------------------------"
 echo
@@ -34,12 +34,12 @@ if [ "$installpg" = "y" ]; then
   echo
 fi
 
-read -e -p "Create Alfresco Database and user? [y/n] " -i "n" createdb
+read -e -p "Create Flowable Database and user? [y/n] " -i "n" createdb
 if [ "$createdb" = "y" ]; then
-  sudo -u postgres createuser -D -A -P $ALFRESCOUSER
-  sudo -u postgres createdb -O $ALFRESCOUSER $ALFRESCODB
+  sudo -u postgres createuser -D -A -P $FLOWABLEUSER
+  sudo -u postgres createdb -O $FLOWABLEUSER $FLOWABLEDB
   echo
-  echo "Remember to update alfresco-global.properties with the alfresco database password"
+  echo "Remember to update flowable-ui-app.properties with the flowable database password"
   echo
 fi
 
