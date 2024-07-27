@@ -7,7 +7,7 @@
 # -------
 
 export LC_ALL=@@LOCALESUPPORT@@
-export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 export FLOW_HOME=/opt/flowable
 export CATALINA_HOME=/opt/flowable/tomcat
 export CATALINA_TMPDIR=/opt/flowable/tomcat/temp
