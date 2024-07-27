@@ -16,7 +16,7 @@ export DEFAULTYESNO="y"
 
 # Branch name to pull from server. Use master for stable.
 BRANCH=master
-export BASE_DOWNLOAD=https://raw.githubusercontent.com/douglascrp/alfresco-ubuntu-install/$BRANCH
+export BASE_DOWNLOAD=https://raw.githubusercontent.com/keemcode/flowable-ubuntu-install/$BRANCH
 
 export LOCALESUPPORT=en_US.utf8
 
@@ -26,11 +26,11 @@ export JDBCPOSTGRES=postgresql-9.4.1211.jar
 export JDBCMYSQLURL=https://dev.mysql.com/get/Downloads/Connector-J
 export JDBCMYSQL=mysql-connector-java-5.1.40.tar.gz
 
-export FLOWABLE_ADMIN_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-admin/6.1.0/flowable-ui-admin-6.1.0.war
-export FLOWABLE_IDM_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-idm-app/6.1.0/flowable-ui-idm-app-6.1.0.war
-export FLOWABLE_MODELER_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-modeler-app/6.1.0/flowable-ui-modeler-app-6.1.0.war
-export FLOWABLE_REST_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-app-rest/6.1.0/flowable-app-rest-6.1.0.war
-export FLOWABLE_TASK_DOWNLOAD=http://central.maven.org/maven2/org/flowable/flowable-ui-task-app/6.1.0/flowable-ui-task-app-6.1.0.war
+export FLOWABLE_ADMIN_DOWNLOAD=https://repo1.maven.org/maven2/org/flowable/flowable-ui-admin-app/6.5.0/flowable-ui-admin-app-6.5.0.war
+export FLOWABLE_IDM_DOWNLOAD=https://repo1.maven.org/maven2/org/flowable/flowable-ui-idm-app/6.5.0/flowable-ui-idm-app-6.5.0.war
+export FLOWABLE_MODELER_DOWNLOAD=https://repo1.maven.org/maven2/org/flowable/flowable-ui-modeler-app/6.5.0/flowable-ui-modeler-app-6.5.0.war
+export FLOWABLE_REST_DOWNLOAD=https://repo1.maven.org/maven2/org/flowable/flowable-app-rest/6.5.0/flowable-app-rest-6.5.0.war
+export FLOWABLE_TASK_DOWNLOAD=https://repo1.maven.org/maven2/org/flowable/flowable-ui-task-app/6.5.0/flowable-ui-task-app-6.5.0.war
 
 # Color variables
 txtund=$(tput sgr 0 1)          # Underline
